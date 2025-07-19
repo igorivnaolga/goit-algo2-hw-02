@@ -20,7 +20,7 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
     jobs = [PrintJob(**job) for job in print_jobs]
     printer = PrinterConstraints(**constraints)
 
-    # Sort by priority (1 is highest), then by print_time descending for greedy grouping
+    # Sort jobs by priority (1 is highest), then by descending print time for greedy grouping
     jobs.sort(key=lambda x: (x.priority, -x.print_time))
 
     print_order = []
@@ -52,7 +52,7 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
             max_time = max(job.print_time for job in group)
             total_time += max_time
         else:
-            # If no grouping was possible, forcibly schedule the next job alone
+            # If no valid group could be formed, schedule the next job individually
             job = jobs.pop(0)
             print_order.append(job.id)
             total_time += job.print_time
@@ -85,20 +85,20 @@ def test_printing_optimization():
 
     constraints = {"max_volume": 300, "max_items": 2}
 
-    print("Test 1 (однаковий пріоритет):")
+    print("Test 1 (same priority):")
     result1 = optimize_printing(test1_jobs, constraints)
-    print(f"Порядок друку: {result1['print_order']}")
-    print(f"Загальний час: {result1['total_time']} хвилин")
+    print(f"Print order: {result1['print_order']}")
+    print(f"Total time: {result1['total_time']} minutes")
 
-    print("\nTest 2 (різні пріоритети):")
+    print("\nTest 2 (different priorities):")
     result2 = optimize_printing(test2_jobs, constraints)
-    print(f"Порядок друку: {result2['print_order']}")
-    print(f"Загальний час: {result2['total_time']} хвилин")
+    print(f"Print order: {result2['print_order']}")
+    print(f"Total time: {result2['total_time']} minutes")
 
-    print("\nTest 3 (перевищення обмежень):")
+    print("\nTest 3 (exceeding constraints):")
     result3 = optimize_printing(test3_jobs, constraints)
-    print(f"Порядок друку: {result3['print_order']}")
-    print(f"Загальний час: {result3['total_time']} хвилин")
+    print(f"Print order: {result3['print_order']}")
+    print(f"Total time: {result3['total_time']} minutes")
 
 
 if __name__ == "__main__":
